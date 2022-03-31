@@ -1,5 +1,11 @@
 from airplane_api import db
+from typing import Final
+from datetime import date
 from flask_sqlalchemy import event
+from sqlalchemy.orm import validates
+
+MANUFACTURERS: Final[list] = ['Airbus', 'Boeing']
+MODELS: Final[dict] = ['747-8', '767', '777', 'A220', 'A330', 'A350']
 
 class Manufacturer(db.Model):
     """Manufacturer's enties are stored here
@@ -59,7 +65,6 @@ def populate_manufacturer_model(*args, **kwargs):
     db.session.add(ManufacturerModel(make='Airbus', model='A350'))
     db.session.commit()
 
-
 class Airplane(db.Model):
     """Airplane's enties are stored here
     
@@ -72,8 +77,8 @@ class Airplane(db.Model):
     manufacturer = db.Column(db.String(20), nullable=False)
     model = db.Column(db.String(20), nullable=False)
     year = db.Column(db.SmallInteger, nullable=True)
-    fuel_demands = db.Column(db.Integer, nullable=True)
-    next_destination = db.Column(db.String(20), nullable=False)
+    fuel_capacity = db.Column(db.Integer, nullable=True)
+    next_destination = db.Column(db.String(20), nullable=True)
     __table_args__ = (db.ForeignKeyConstraint([manufacturer, model],
                                            [ManufacturerModel.make, ManufacturerModel.model]), {}
                       )
@@ -81,3 +86,51 @@ class Airplane(db.Model):
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+    @validates('manufacturer')
+    def validate_manufacturer(self, key, manufacturer):
+        if not manufacturer:
+            raise AssertionError('Manufacturer is not provided')
+        elif manufacturer not in MANUFACTURERS:
+            raise AssertionError('Manufacturer must be either "Airbus" or "Boeing"')
+        return manufacturer
+
+    @validates('model')
+    def validate_model(self, key, model):
+        if not model:
+            raise AssertionError('Model is not provided')
+        elif model not in MODELS:
+            raise AssertionError('Model must be either 747-8, 767, 777, A220, A330 or A350')
+        return model
+
+    @validates('year')
+    def validate_year(self, key, year):
+        todays_date = date.today()
+        this_year = todays_date.year
+        if year:
+            if not isinstance(year, str):
+                raise AssertionError('Year\'s type should be string')
+            if not year.isdigit():
+                raise AssertionError('Year must be digit')
+            if not (int(year) >= 1900 and int(year)<= this_year):
+                raise AssertionError('Year must be between 1900 and the current year')
+        return year
+    
+    @validates('fuel_capacity')
+    def validate_fuel_capacity(self, key, fuel_capacity):
+        if fuel_capacity:
+            if not isinstance(fuel_capacity, str):
+                raise AssertionError('Fuel capacity\'s type should be string')
+            if not fuel_capacity.isdigit():
+                raise AssertionError('Fuel capacity must be digit')
+            if not (int(fuel_capacity) >= 0):
+                raise AssertionError('Fuel capacity should be positive')
+        return fuel_capacity
+
+    @validates('next_destination')
+    def validate_next_destination(self, key, next_destination):
+        if next_destination:
+            if not isinstance(next_destination, str):
+                raise AssertionError('Next destination\'s type should be string')
+            if len(next_destination) > 85:
+                raise AssertionError('Next destination should contain less than 85 characters')
+        return next_destination

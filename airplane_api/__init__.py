@@ -32,6 +32,10 @@ def create_app():
     db.init_app(app)
     app.cli.add_command(init_db_command)
 
+    from airplane_api import airplane
+
+    app.register_blueprint(airplane.bp)
+
     return app
 
 def init_db():
