@@ -5,7 +5,6 @@ from flask import (
     Blueprint, current_app, jsonify, make_response, request
 )
 
-
 bp = Blueprint('airplane', __name__, url_prefix='/v1/')
 
 @bp.route("/airplane", methods=["POST"])
@@ -46,3 +45,21 @@ def store_airplane():
         return make_response(jsonify(msg='Error: {}'.format(ex)), 400)
 
     return make_response(jsonify(new_airplane.as_dict(), 200))
+
+@bp.route("/airplane/<int:id>", methods=["GET"])
+def retrieve(id: int):
+    """Fetch an airplane by its id
+
+    Endpoint:
+    GET /v1/airplane/5
+
+    Get an airplane's information.
+    """
+    if not isinstance(id, int):
+        return make_response(jsonify(msg='Id should be int'), 400)
+    
+    airplane = Airplane.query.get(id)
+    if not airplane:
+        return make_response(jsonify(msg='Model with id = {} doesn\'t exist'.format(id)), 404)
+
+    return make_response(jsonify(airplane.as_dict()), 200)
