@@ -60,6 +60,31 @@ def retrieve(id: int):
     
     airplane = Airplane.query.get(id)
     if not airplane:
-        return make_response(jsonify(msg='Model with id = {} doesn\'t exist'.format(id)), 404)
+        return make_response(jsonify(msg='Airplane with id = {} doesn\'t exist'.format(id)), 404)
 
     return make_response(jsonify(airplane.as_dict()), 200)
+
+@bp.route("/airplane/<int:id>", methods=["DELETE"])
+def delete(id: int):
+    """Delete an airplane by its id
+
+    Endpoint:
+    DELETE /v1/airplane/5
+
+    Delete an airplane's entry.
+    """
+    if not isinstance(id, int):
+        return make_response(jsonify(msg='Id should be int'), 400)
+
+    airplane = Airplane.query.get(id)
+    if not airplane:
+        return make_response(jsonify(msg='Airplane with id = {} doesn\'t exist'.format(id)), 404)
+
+    try:
+        db.session.delete(airplane)
+        db.session.commit()
+    except exc.IntegrityError as ex:
+        db.session.rollback()
+        return make_response(jsonify(msg='Error: {}'.format(ex)), 500)
+
+    return make_response(jsonify(msg='Airplane with id = {} has been deleted!'.format(id)), 200)
