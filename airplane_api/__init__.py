@@ -1,5 +1,6 @@
 import os
 import click
+from logging.config import dictConfig
 from flask import Flask
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
@@ -15,7 +16,35 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
+def initLog():
+    dictConfig({
+        'version': 1,
+        'formatters': {'default': {
+            'format': '[%(asctime)s] [%(levelname)s] %(module)s:%(funcName)s() - %(message)s',
+        }},
+        'handlers': {
+            'wsgi': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'formatter': 'default'
+            },
+            'file': {
+            'class': 'logging.FileHandler',
+            'formatter': 'default',
+            'filename': 'instance/airplane_api.log',
+            'level':'DEBUG'
+            }
+        },
+        'root': {
+            'level': 'DEBUG',
+            'handlers': ['file']
+        }
+    })
+
 def create_app():
+    #Configure logging
+    initLog()
+
     #Create app
     app = Flask(__name__, instance_relative_config=True)
 
