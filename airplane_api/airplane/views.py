@@ -46,40 +46,10 @@ def store_airplane():
 
     return make_response(jsonify(new_airplane.as_dict(), 200))
 
-@bp.route("/airplane/<int:id>", methods=["GET"])
-def retrieve(id: int):
-    """Fetch an airplane by its id
-
-    Endpoint:
-    GET /v1/airplane/5
-
-    Get an airplane's information.
-    """
-    if not isinstance(id, int):
-        return make_response(jsonify(msg='Id should be int'), 400)
-    
-    airplane = Airplane.query.get(id)
-    if not airplane:
-        return make_response(jsonify(msg='Airplane with id = {} doesn\'t exist'.format(id)), 404)
-
+def get_airplane(airplane):
     return make_response(jsonify(airplane.as_dict()), 200)
 
-@bp.route("/airplane/<int:id>", methods=["DELETE"])
-def delete(id: int):
-    """Delete an airplane by its id
-
-    Endpoint:
-    DELETE /v1/airplane/5
-
-    Delete an airplane's entry.
-    """
-    if not isinstance(id, int):
-        return make_response(jsonify(msg='Id should be int'), 400)
-
-    airplane = Airplane.query.get(id)
-    if not airplane:
-        return make_response(jsonify(msg='Airplane with id = {} doesn\'t exist'.format(id)), 404)
-
+def delete_airplane(airplane):
     try:
         db.session.delete(airplane)
         db.session.commit()
@@ -88,3 +58,57 @@ def delete(id: int):
         return make_response(jsonify(msg='Error: {}'.format(ex)), 500)
 
     return make_response(jsonify(msg='Airplane with id = {} has been deleted!'.format(id)), 200)
+
+def update_airplane(airplane):
+    reqJson = request.get_json()
+    next_destination = reqJson.get('next_destination')
+    try:
+        airplane.next_destination = next_destination
+        db.session.commit()
+    except exc.IntegrityError as ex:
+        db.session.rollback()
+        return make_response(jsonify(msg='Error: {}'.format(ex)), 400)
+
+    return make_response(jsonify(airplane.toDict()), 200)
+
+@bp.route("/airplane/<int:id>", methods=["GET", "DELETE", "PUT"])
+def airplane_ops(id: int):
+    """(i)Fetch an airplane by its id
+
+    Endpoint:
+    GET /v1/airplane/5
+
+    Get an airplane's information.
+
+    (ii)Delete an airplane by its id
+
+    Endpoint:
+    DELETE /v1/airplane/5
+
+    Delete an airplane's entry.
+
+    (iii)Update an airplane's next destination
+
+    Endpoint:
+    PUT /v1/airplane/5
+    Request Body:
+    {
+        "next_destination":"Athens"
+    }
+
+    Update an airplane's entry.
+    """
+    if not isinstance(id, int):
+        return make_response(jsonify(msg='Id should be int'), 400)
+    
+    airplane = Airplane.query.get(id)
+    if not airplane:
+        return make_response(jsonify(msg='Airplane with id = {} doesn\'t exist'.format(id)), 404)
+
+    if request.method == 'GET':
+        return get_airplane(airplane)
+    elif request.method == 'DELETE':
+        return delete_airplane(airplane)
+    else:
+        return update_airplane(airplane)
+        
