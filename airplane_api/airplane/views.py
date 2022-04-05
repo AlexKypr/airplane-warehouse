@@ -63,13 +63,13 @@ def delete_airplane(airplane):
         db.session.rollback()
         return make_response(jsonify(msg='Error: {}'.format(ex)), 500)
 
-    current_app.logger.debug('Airplane with Id: {} has been deleted!'.format(id))
-    return make_response(jsonify(msg='Airplane with Id: {} has been deleted!'.format(id)), 200)
+    current_app.logger.debug('Airplane with Id: {} has been deleted!'.format(airplane.id))
+    return make_response(jsonify(msg='Airplane with Id: {} has been deleted!'.format(airplane.id)), 200)
 
 def update_airplane(airplane):
     reqJson = request.get_json()
     next_destination = reqJson.get('next_destination')
-    current_app.logger.debug('Airplane\s next destination should be {}!'.format(next_destination))
+    current_app.logger.debug('Airplane\'s next destination should be {}!'.format(next_destination))
     try:
         airplane.next_destination = next_destination
         db.session.commit()
@@ -77,9 +77,13 @@ def update_airplane(airplane):
         current_app.logger.error('Airplane with Id: {} could not be updated!'.format(airplane.id))
         db.session.rollback()
         return make_response(jsonify(msg='Error: {}'.format(ex)), 400)
-
+    except AssertionError as exception_message:
+        current_app.logger.error('Airplane with Id: {} and next destination: {} could not be updated!'.format(airplane.id, next_destination))
+        db.session.rollback()
+        return make_response(jsonify(msg='Error: {}'.format(exception_message)), 400)
+    
     current_app.logger.debug('Airplane with Id: {} has been updated!'.format(airplane.id))
-    return make_response(jsonify(airplane.toDict()), 200)
+    return make_response(jsonify(airplane.as_dict()), 200)
 
 @bp.route("/airplane/<int:id>", methods=["GET", "DELETE", "PUT"])
 def airplane_ops(id: int):
