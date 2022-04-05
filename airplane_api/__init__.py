@@ -47,7 +47,8 @@ def create_app():
 
     #Create app
     app = Flask(__name__, instance_relative_config=True)
-
+    app.config.from_pyfile('config.py')
+    
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, app.instance_path,'db.sqlite')
 
     try:
