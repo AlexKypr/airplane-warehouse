@@ -1,6 +1,6 @@
 # airplane-warehouse
 
-RESTful CRUD API application using [Flask](http://flask.pocoo.org), [SQLAlchemy](http://www.sqlalchemy.org) and [Flask-SQLAlchemy](http://flask-sqlalchemy.pocoo.org).
+RESTful CRUD API application using [Flask](http://flask.pocoo.org), and [Flask-SQLAlchemy](http://flask-sqlalchemy.pocoo.org).
 We use SQlite to store our data. The database contains four tables Airplane, Manufacturer, AirplaneModel and ManufacturerModel. 
 
 ManufacturerModel has Many-to-One relationship with both Manufacturer and AirplaneModel to constrain the values of Manufacturer and Model columns with the respective ones specified
