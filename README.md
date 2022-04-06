@@ -1,5 +1,7 @@
 # airplane-warehouse
 
+[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/AlexKypr/airplane-warehouse/blob/main/LICENSE)
+
 RESTful CRUD API application using [Flask](http://flask.pocoo.org), and [Flask-SQLAlchemy](http://flask-sqlalchemy.pocoo.org), using SQlite db to store our data. 
 
 The database contains four tables Airplane, Manufacturer, AirplaneModel and ManufacturerModel. ManufacturerModel has Many-to-One relationship with both Manufacturer and AirplaneModel to constrain the values of Manufacturer and Model columns with the respective ones specified
