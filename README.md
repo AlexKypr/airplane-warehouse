@@ -32,7 +32,7 @@ $ pip install -r requirements.txt
 ## Run the App
 ```
 $ export FLASK_APP=airplane_api
-$ flask db init
+$ flask init-db
 ```
 
 * Run the app
