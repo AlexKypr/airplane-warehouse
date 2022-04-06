@@ -8,7 +8,7 @@ in the Manufacturer and AirplaneModel tables. Moreover, Airplane has Many-to-One
 would not be allowed.
 
 ## Getting started
-* At first you'll need to get the source code of the project. Do this by cloning the [airplane-warehouse](https://github.com/AlexKypr/airplane-warehouse).
+* Fetch the source code of the project.
 ```
 $ git clone git@github.com:AlexKypr/airplane-warehouse.git
 $ cd airplane-warehouse
