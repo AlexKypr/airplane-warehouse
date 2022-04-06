@@ -14,7 +14,7 @@ $ git clone git@github.com:AlexKypr/airplane-warehouse.git
 $ cd airplane-warehouse
 ```
 
-* Create a virtual environment for this project and install dependencies
+* Create a virtual environment for this project
 ```
 $ python3 -m venv your-virtual-env
 ```
