@@ -40,3 +40,91 @@ $ flask init-db
 ```
 $ flask run
 ```
+
+## API Documentation
+
+### 1. Create airplane
+
+#### Request
+```
+POST /v1/airplane
+```
+#### Request body
+```
+{
+    "manufacturer":"Airbus",
+    "model":"A220",
+    "year":"2015",
+    "fuel_capacity":"200000",
+    "next_destination":"Rome"
+}
+```
+#### Response
+```
+[
+    {
+        "fuel_capacity": 200000,
+        "id": 1,
+        "manufacturer": "Airbus",
+        "model": "A220",
+        "next_destination": "Rome",
+        "year": 2015
+    },
+    200
+]
+```
+
+### 2. Get airplane information
+
+#### Request
+```
+GET /v1/airplane/:id
+```
+
+#### Response
+```
+{
+    "fuel_capacity": 200000,
+    "id": 1,
+    "manufacturer": "Airbus",
+    "model": "A220",
+    "next_destination": "Rome",
+    "year": 2015
+}
+```
+
+### 3. Update airplane's next destination
+
+#### Request
+```
+PUT /v1/airplane/:id
+```
+#### Request body
+```
+{
+    "next_destination":"Athens"
+}
+```
+#### Response
+```
+{
+    "fuel_capacity": 200000,
+    "id": 1,
+    "manufacturer": "Airbus",
+    "model": "A220",
+    "next_destination": "Athens",
+    "year": 2015
+}
+```
+### 4. Delete airplane
+
+#### Request
+```
+DELETE /v1/airplane/:id
+```
+#### Response
+```
+{
+    "msg": "Airplane with Id: 1 has been deleted!"
+}
+```
